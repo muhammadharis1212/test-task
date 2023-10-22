@@ -1,0 +1,144 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Locus API Test Task
+  description: API for managing locuses
+  termsOfService: 'https://example.com/terms'
+  contact:
+    name: Haris Naveed
+    email: muhammadharis1212@gmail.com
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
+servers:
+  - url: http://localhost:3000
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /locus:
+    get:
+      summary: Get a list of locuses
+      description: Retrieve a list of locuses with optional filters and sorting.
+      tags:
+        - Locus
+      parameters:
+        - in: query
+          name: assemblyId
+          schema:
+            type: string
+          description: Filter by assembly ID
+        - in: query
+          name: Id
+          schema:
+            type: integer
+          description: Filter by locus ID
+        - in: query
+          name: regionId
+          schema:
+            type: integer
+          description: Filter by region ID
+        - in: query
+          name: membershipStatus
+          schema:
+            type: string
+          description: Filter by membership status (member or Highlighted)
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Number of items per page
+        - in: query
+          name: sort
+          schema:
+            type: string
+          description: Sort order (asc or desc)
+        - in: query
+          name: sortColumn
+          schema:
+            type: string
+          description: Sort column (id, assembly_id, region_id, membership_status)
+        - in: query
+          name: sideLoading
+          schema:
+            type: string
+          description: Side Load Records (value=locusMembers)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    assembly_id:
+                      type: string
+                    locus_name:
+                      type: string
+                    public_locus_name:
+                      type: string
+                    chromosome:
+                      type: string
+                    strand:
+                      type: string
+                    locus_start:
+                      type: integer
+                    locus_stop:
+                      type: integer
+                    member_count:
+                      type: integer
+      security:
+      - bearerAuth: [] # No security is required for this endpoint
+      deprecated: false
+
+  /login:
+    post:
+      summary: Login
+      description: User login to obtain JWT token
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  expiresIn:
+                    type: number
+        '401':
+          description: Unauthorized
+        '500':
+          description: Internal Server Error
+
+security:
+  - bearerAuth: []
